@@ -1,0 +1,37 @@
+version: '3.6'
+services:
+  influxdb2:
+    image: influxdb:2.0.8-alpine
+    container_name: influxdb2
+    ports:
+      - 8086:8086
+    volumes:
+      - type: bind
+        source: /home/ubuntu/data/inftelegra/influxdb2/data
+        target: /var/lib/influxdb2
+      - type: bind
+        source: /home/ubuntu/data/inftelegra/influxdb2/config
+        target: /etc/influxdb2
+    restart: always
+  grafana:
+    image: grafana/grafana:8.1.2
+    container_name: grafana
+    ports:
+      - 3000:3000
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+    volumes:
+      - /home/ubuntu/data/inftelegra/grafana/var_lib_grafana:/var/lib/grafana
+      - /home/ubuntu/data/inftelegra/grafana/etc_grafana/grafana.ini:/etc/grafana/grafana.ini:ro
+    restart: always
+    user: root
+  telegraf:
+    image: telegraf:1.19.3
+    container_name: telegraf
+#    ports:
+#      - 8092:8092
+#      - 8094:8094
+#      - 8125:8125
+    volumes:
+      - /home/ubuntu/data/inftelegra/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    restart: always
